@@ -1,0 +1,33 @@
+Pinouts
+
+///////// Bluetooth \\\\\\\\\
+Bluetooth -> Arduino Nano
+
+VCC       -> 3.3V
+GND       -> GND  
+TXD       -> D2
+RXD       -> D3
+
+///////// LCD1 : RIGHT EYE \\\\\\\\\
+LCD 1 -> Arduino Nano
+
+RST   -> RST
+DC    -> D6
+CS    -> D4
+CLK   -> D13
+DIN   -> D11
+GND   -> GND
+VCC   -> 5V
+
+///////// LCD2 : LEFT EYE \\\\\\\\\
+LCD 2 -> Arduino Nano
+
+RST   -> RST
+DC    -> D6
+CS    -> D5
+CLK   -> D13
+DIN   -> D11
+GND   -> GND
+VCC   -> 5V
+
+Mauve = Rouges
