@@ -34,28 +34,34 @@
 #include <SoftwareSerial.h>
 
 // ST7789 tft1 module connections
-#define tft1_CS    5  // define chip select pin (CS pin pour activer ecran 1 ou non)
-#define tft2_CS    4  // define chip select pin (CS pin pour activer ecran 2 ou non) 
+#define tft1_CS    4  // define chip select pin (CS pin pour activer ecran 1 ou non)
+#define tft2_CS    5  // define chip select pin (CS pin pour activer ecran 2 ou non) 
 #define tft1_DC    6  // define data/command pin
 #define tft1_RST   -1  // define reset pin, or set to -1 and connect to Arduino RESET pin
+#define tft2_DC    6  // define data/command pin
+#define tft2_RST   -1  // define reset pin, or set to -1 and connect to Arduino RESET pin
 
-// Initialize Adafruit ST7789 tft library for screen 1
+// Initialize Adafruit ST7789 tft library for screen 1 (RIGHT EYE)
 Adafruit_ST7789 tft1 = Adafruit_ST7789(tft1_CS, tft1_DC, tft1_RST);
-// Initialize Adafruit ST7789 tft library for screen 2
-Adafruit_ST7789 tft2 = Adafruit_ST7789(tft2_CS, tft1_DC, tft1_RST);
+// Initialize Adafruit ST7789 tft library for screen 2 (LEFT EYE)
+Adafruit_ST7789 tft2 = Adafruit_ST7789(tft2_CS, tft2_DC, tft2_RST);
 
+// Create the Bluetooth Serial Port
 SoftwareSerial hc06(2,3);
+// Empty global variable that will contain the Bluetooth values
 String cmd="";
 
-
+// Arduino setup method to initialize everything
 void setup(void) {
+  
   //Initialize Bluetooth Serial Port
   hc06.begin(9600);
 
- 
+  //Initialize the regular Serial Port (debugging withing Arduino IDE)
   Serial.begin(9600);
 
-  // if the display has CS pin try with SPI_MODE0
+  //Initialize both screens 
+  //if the display has CS pin try with SPI_MODE0
   tft1.init(135, 240, SPI_MODE0);    // Init ST7789 display 135x240 pixel
   tft2.init(135, 240, SPI_MODE0);    // Init ST7789 display 135x240 pixel
 
@@ -63,18 +69,24 @@ void setup(void) {
   tft1.setRotation(2);
   tft2.setRotation(2);
 
+  // Fill the screen with black to reset them
   tft1.fillScreen(ST77XX_BLACK);
   tft2.fillScreen(ST77XX_BLACK);
 
-  Serial.println(F("Initialized"));
+  // Set the normal centered eyes
   normalEye(0x4f7c);
   normalEye2(0x4f7c);  
-}
 
-void loop() {
+  // Invert the display (not sure if needed here)
   tft1.invertDisplay(true);
   tft2.invertDisplay(true);
+}
+
+
+// Arduino loop method (this runs as long as the arduino has power)
+void loop() {
   
+  //Short delay to make sure we receive the whole bluetooth command if more than 1 char  
   delay(500);
 
   // Check if anything received by bluetooth
@@ -118,9 +130,11 @@ void loop() {
  }
 }
 
-//-------------------
-//------SCREEN 1-----
-//-------------------
+// CUSTOM METHODS FOR OUR PROJECT //
+
+//-------------------------------
+//------SCREEN 1 : RIGHT EYE-----
+//-------------------------------
 void normalEye(uint16_t color) {
   int x = tft1.width()/2-(tft1.width()/1.5)/2;
   int y = 1;
@@ -137,14 +151,14 @@ void eraseNormalEye() {
 }
 
 void normalEyeLeft(uint16_t color) {
-  int x = 1;
+  int x = tft1.width()-tft1.width()/1.5;
   int y = 1;
   int w = tft1.width()/1.5;
   int h = tft1.height()-2;
   tft1.fillRoundRect(x, y, w, h, 80, color);
 }
 void eraseNormalEyeLeft() {
-  int x = 1;
+  int x = tft1.width()-tft1.width()/1.5;
   int y = 1;
   int w = tft1.width()/1.5;
   int h = tft1.height()-2;
@@ -152,14 +166,14 @@ void eraseNormalEyeLeft() {
 }
 
 void normalEyeRight(uint16_t color) {
-  int x = tft1.width()-tft1.width()/1.5;
+  int x = 1;
   int y = 1;
   int w = tft1.width()/1.5;
   int h = tft1.height()-2;
   tft1.fillRoundRect(x, y, w, h, 80, color);
 }
 void eraseNormalEyeRight() {
-  int x = tft1.width()-tft1.width()/1.5;
+  int x = 1;
   int y = 1;
   int w = tft1.width()/1.5;
   int h = tft1.height()-2;
@@ -200,9 +214,9 @@ void eraseHappyEyeTriangle() {
 }
 
 
-//-------------------
-//------SCREEN 2-----
-//-------------------
+//-------------------------------
+//------SCREEN 2 : LEFT EYE-----
+//-------------------------------
 
 void normalEye2(uint16_t color) {
   int x = tft2.width()/2-(tft2.width()/1.5)/2;
@@ -220,14 +234,14 @@ void eraseNormalEye2() {
 }
 
 void normalEyeLeft2(uint16_t color) {
-  int x = 1;
+  int x = tft2.width()-tft2.width()/1.5;
   int y = 1;
   int w = tft2.width()/1.5;
   int h = tft2.height()-2;
   tft2.fillRoundRect(x, y, w, h, 80, color);
 }
 void eraseNormalEyeLeft2() {
-  int x = 1;
+  int x = tft2.width()-tft2.width()/1.5;
   int y = 1;
   int w = tft2.width()/1.5;
   int h = tft2.height()-2;
@@ -235,14 +249,14 @@ void eraseNormalEyeLeft2() {
 }
 
 void normalEyeRight2(uint16_t color) {
-  int x = tft2.width()-tft2.width()/1.5;
+  int x = 1;
   int y = 1;
   int w = tft2.width()/1.5;
   int h = tft2.height()-2;
   tft2.fillRoundRect(x, y, w, h, 80, color);
 }
 void eraseNormalEyeRight2() {
-  int x = tft2.width()-tft2.width()/1.5;
+  int x = 1;
   int y = 1;
   int w = tft2.width()/1.5;
   int h = tft2.height()-2;
@@ -316,7 +330,7 @@ void getHappyTriangle() {
   happyEyeTriangle2(0x4f7c);
 }
 
-// Command W
+// Command W (Wink Left Eye)
 void getWinky() {
   tft1.fillScreen(ST77XX_BLACK);
   tft2.fillScreen(ST77XX_BLACK);
